@@ -116,25 +116,25 @@ public class MatrixGUI extends JFrame {
     }
 
     public void setKeyPressEvent() {
-        jPanel.addKeyListener(new KeyListener() {
+        getTommy().addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    getTommy().setBackground(Color.blue);
-                    jFrame.revalidate();
-                    jFrame.repaint();
-                    System.out.println("ENTER!!!");
-                }
+                System.out.println("ENTER TYPED");
             }
 
             @Override
             public void keyPressed(KeyEvent ke) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+                    getTommy().setBackground(Color.blue);
+                    jFrame.revalidate();
+                    jFrame.repaint();
+                    System.out.println("ENTER PRESSED");
+                }
             }
 
             @Override
             public void keyReleased(KeyEvent ke) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                System.out.println("ENTER RELEASED");
             }
         });
     }
