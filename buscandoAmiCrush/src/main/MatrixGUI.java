@@ -10,8 +10,8 @@ package main;
 //import javax.swing.JToggleButton;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
@@ -24,14 +24,27 @@ public class MatrixGUI extends JFrame {
     private JFrame jFrame = this;
     private JPanel jPanel;
     private JButton[][] jButton;
+    private JButton leftButton;
+    private JButton rigthButton;
+    private JButton upButton;
+    private JButton downButton;
+    private Tommy tommy;
 
     public MatrixGUI() {
         setjPanel(getJButton());
-        setKeyPressEvent();
+        setLeftButton("L");
+        setRigthButton("R");
+        setUpButton("U");
+        setDownButton("D");
+        tommy = new Tommy();
+        refreshTommyPosition();
+        this.add(leftButton);
+        this.add(rigthButton);
+        this.add(upButton);
+        this.add(downButton);
         this.add(jPanel);
-        setTommy();
-        getJFrame();
 
+        getJFrame();
     }
 
     public JPanel setjPanel(JButton[][] matriz) {
@@ -46,7 +59,7 @@ public class MatrixGUI extends JFrame {
 
                 }
             }
-            this.jPanel.setBounds(10, 10, 1550, 920);
+            this.jPanel.setBounds(10, 10, 1200, 800);
         }
         jPanel.setVisible(true);
 
@@ -55,7 +68,7 @@ public class MatrixGUI extends JFrame {
 
     public void getJFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1600, 1000);
+        this.setSize(1450, 880);
         this.setLayout(null);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
@@ -100,43 +113,84 @@ public class MatrixGUI extends JFrame {
         return jButton;
     }
 
-    public void setTommy() {
-        jButton[10][10].setText("Tommy");
-        jButton[10][10].setOpaque(true);
-        jButton[10][10].setBackground(Color.red);
-    }
-
-    public JButton getTommy() {
-        return jButton[10][10];
-    }
-
-    public void moveTommy() {
-        //Permite detectar el presionado de tecla
-
-    }
-
-    public void setKeyPressEvent() {
-        getTommy().addKeyListener(new KeyListener() {
+    public void setLeftButton(String button) {
+        this.leftButton = new JButton(button);
+        this.leftButton.setBounds(1250, 250, 50, 50);
+        this.leftButton.addActionListener(new ActionListener() {
             @Override
-            public void keyTyped(KeyEvent ke) {
-                System.out.println("ENTER TYPED");
-            }
-
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    getTommy().setBackground(Color.blue);
-                    jFrame.revalidate();
-                    jFrame.repaint();
-                    System.out.println("ENTER PRESSED");
+            public void actionPerformed(ActionEvent ae) {
+                cleanLastTommyPosition();
+                tommy.setY(tommy.getY() - 1);
+                if (tommy.getY() < 0) {
+                    tommy.setY(jButton.length - 1);
                 }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                System.out.println("ENTER RELEASED");
+                refreshTommyPosition();
+                refreshJframe();
             }
         });
     }
 
+    public JButton getLeftButton() {
+
+        return leftButton;
+
+    }
+
+    public void setRigthButton(String button) {
+
+        this.rigthButton = new JButton(button);
+        this.rigthButton.setBounds(1350, 250, 50, 50);
+
+    }
+
+    public JButton getRigthButton() {
+
+        return rigthButton;
+
+    }
+
+    public void setUpButton(String button) {
+
+        this.upButton = new JButton(button);
+        this.upButton.setBounds(1300, 200, 50, 50);
+    }
+
+    public JButton getUpButton() {
+
+        return upButton;
+
+    }
+
+    public void setDownButton(String button) {
+
+        this.downButton = new JButton(button);
+        this.downButton.setBounds(1300, 300, 50, 50);
+    }
+
+    public JButton getDownButton() {
+
+        return downButton;
+
+    }
+
+    public void cleanLastTommyPosition() {
+        int x = tommy.getX();
+        int y = tommy.getY();
+
+        jButton[x][y].setText("");
+        jButton[x][y].setBackground(Color.GRAY);
+    }
+
+    public void refreshTommyPosition() {
+        int x = tommy.getX();
+        int y = tommy.getY();
+
+        jButton[x][y].setText("Tommy");
+        jButton[x][y].setBackground(Color.red);
+    }
+
+    public void refreshJframe() {
+        jFrame.revalidate();
+        jFrame.repaint();
+    }
 }
