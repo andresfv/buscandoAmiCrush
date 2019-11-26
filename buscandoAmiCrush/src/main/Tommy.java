@@ -12,8 +12,8 @@ package main;
 public class Tommy {
 
     private String name = "T";
-    private int x = 1;
-    private int y = 1;
+    private int x = 0;
+    private int y = 0;
     private int power = 3;
     private int bullets = 6;
     private int teleport = 4;//movimiento circular
