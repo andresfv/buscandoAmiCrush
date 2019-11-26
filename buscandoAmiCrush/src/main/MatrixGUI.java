@@ -36,7 +36,10 @@ public class MatrixGUI extends JFrame {
         setRigthButton("R");
         setUpButton("U");
         setDownButton("D");
+
         tommy = new Tommy();
+        int selection = positionSelector();
+        initTommy(selection);
         refreshTommyPosition();
         this.add(leftButton);
         this.add(rigthButton);
@@ -119,10 +122,9 @@ public class MatrixGUI extends JFrame {
         this.leftButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                cleanLastTommyPosition();
-                tommy.setY(tommy.getY() - 1);
-                if (tommy.getY() < 0) {
-                    tommy.setY(jButton.length - 1);
+                if (tommy.getY() >= 1) {
+                    cleanLastTommyPosition();
+                    tommy.setY(tommy.getY() - 1);
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -131,46 +133,69 @@ public class MatrixGUI extends JFrame {
     }
 
     public JButton getLeftButton() {
-
         return leftButton;
-
     }
 
     public void setRigthButton(String button) {
-
         this.rigthButton = new JButton(button);
         this.rigthButton.setBounds(1350, 250, 50, 50);
+        this.rigthButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (tommy.getY() <= jButton.length - 2) {
+                    cleanLastTommyPosition();
+                    tommy.setY(tommy.getY() + 1);
+                }
+                refreshTommyPosition();
+                refreshJframe();
+            }
+        });
 
     }
 
     public JButton getRigthButton() {
-
         return rigthButton;
-
     }
 
     public void setUpButton(String button) {
-
         this.upButton = new JButton(button);
         this.upButton.setBounds(1300, 200, 50, 50);
+        this.upButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (tommy.getX() >= 1) {
+                    cleanLastTommyPosition();
+                    tommy.setX(tommy.getX() - 1);
+                }
+                refreshTommyPosition();
+                refreshJframe();
+            }
+        });
     }
 
     public JButton getUpButton() {
-
         return upButton;
-
     }
 
     public void setDownButton(String button) {
 
         this.downButton = new JButton(button);
         this.downButton.setBounds(1300, 300, 50, 50);
+        this.downButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (tommy.getX() <= jButton.length - 2) {
+                    cleanLastTommyPosition();
+                    tommy.setX(tommy.getX() + 1);
+                }
+                refreshTommyPosition();
+                refreshJframe();
+            }
+        });
     }
 
     public JButton getDownButton() {
-
         return downButton;
-
     }
 
     public void cleanLastTommyPosition() {
@@ -192,5 +217,64 @@ public class MatrixGUI extends JFrame {
     public void refreshJframe() {
         jFrame.revalidate();
         jFrame.repaint();
+    }
+
+    /**
+     * Establece la posicion inicial de Tommy sin tomar en cuenta las esquinas.
+     * Norte = 1, Sur = 2, Este = 3, Oeste = 4.
+     *
+     * @param position
+     */
+    public void initTommy(int position) {
+        switch (position) {
+            case 0:
+                tommy.setX(0);
+                tommy.setY(generaNumeroAleatorio(1, 18));
+                break;
+            case 1:
+                tommy.setX(jButton.length - 1);
+                tommy.setY(generaNumeroAleatorio(1, 18));
+                break;
+            case 2:
+                tommy.setX(generaNumeroAleatorio(1, 18));
+                tommy.setY(jButton.length - 1);
+                break;
+            case 3:
+                tommy.setX(generaNumeroAleatorio(1, 18));
+                tommy.setY(0);
+                break;
+
+            default:
+                System.out.println("VALOR INVALIDO PARA INICIAR");
+                break;
+        }
+    }
+
+    /**
+     * Retorna un número aleatorio dentro de un minimo y un maximo.
+     *
+     * @param minimo
+     * @param maximo
+     * @return numeroAleatorio
+     */
+    public int generaNumeroAleatorio(int minimo, int maximo) {
+        int numeroAleatorio = 0;
+        numeroAleatorio = (int) Math.floor(Math.random() * (minimo - (maximo + 1)) + (maximo + 1));
+        return numeroAleatorio;
+    }
+
+    /**
+     * Permite seleccionar la posición inicial de Tommy.
+     *
+     * @return selection
+     */
+    public int positionSelector() {
+
+        Object options[] = {"Norte", "Sur", "Este", "Oeste"};
+        //Opciones 1, 2, 3, 4
+        int selection = JOptionPane.showOptionDialog(null, "Seleccione una posición para iniciar a Tommy", "Selector de Posiciones",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "opcion 3");
+
+        return selection;
     }
 }
