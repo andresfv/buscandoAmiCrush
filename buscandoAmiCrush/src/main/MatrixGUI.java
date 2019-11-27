@@ -29,6 +29,8 @@ public class MatrixGUI extends JFrame {
     private JButton upButton;
     private JButton downButton;
     private Tommy tommy;
+    private LaCrush crush;
+    private int tommySteps;
 
     public MatrixGUI() {
         setjPanel(getJButton());
@@ -38,9 +40,13 @@ public class MatrixGUI extends JFrame {
         setDownButton("D");
 
         tommy = new Tommy();
+        crush = new LaCrush();
+
         int selection = positionSelector();
         initTommy(selection);
+        initCrush();
         refreshTommyPosition();
+        refreshCrushPosition();
         this.add(leftButton);
         this.add(rigthButton);
         this.add(upButton);
@@ -86,6 +92,14 @@ public class MatrixGUI extends JFrame {
         return jButton;
     }
 
+    public int getTommySteps() {
+        return tommySteps;
+    }
+
+    public void setTommySteps(int tommySteps) {
+        this.tommySteps = tommySteps;
+    }
+
     /**
      * Usa recursividad para llenar la matriz.
      *
@@ -125,6 +139,8 @@ public class MatrixGUI extends JFrame {
                 if (tommy.getY() >= 1) {
                     cleanLastTommyPosition();
                     tommy.setY(tommy.getY() - 1);
+                    tommySteps++;
+                    moveCrush();
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -145,6 +161,8 @@ public class MatrixGUI extends JFrame {
                 if (tommy.getY() <= jButton.length - 2) {
                     cleanLastTommyPosition();
                     tommy.setY(tommy.getY() + 1);
+                    tommySteps++;
+                    moveCrush();
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -166,6 +184,8 @@ public class MatrixGUI extends JFrame {
                 if (tommy.getX() >= 1) {
                     cleanLastTommyPosition();
                     tommy.setX(tommy.getX() - 1);
+                    tommySteps++;
+                    moveCrush();
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -187,6 +207,8 @@ public class MatrixGUI extends JFrame {
                 if (tommy.getX() <= jButton.length - 2) {
                     cleanLastTommyPosition();
                     tommy.setX(tommy.getX() + 1);
+                    tommySteps++;
+                    moveCrush();
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -206,12 +228,28 @@ public class MatrixGUI extends JFrame {
         jButton[x][y].setBackground(Color.GRAY);
     }
 
+    public void cleanLastCrushPosition() {
+        int x = crush.getX();
+        int y = crush.getY();
+
+        jButton[x][y].setText("");
+        jButton[x][y].setBackground(Color.GRAY);
+    }
+
     public void refreshTommyPosition() {
         int x = tommy.getX();
         int y = tommy.getY();
 
-        jButton[x][y].setText("Tommy");
-        jButton[x][y].setBackground(Color.red);
+        jButton[x][y].setText(tommy.getName());
+        jButton[x][y].setBackground(Color.blue);
+    }
+
+    public void refreshCrushPosition() {
+        int x = crush.getX();
+        int y = crush.getY();
+
+        jButton[x][y].setText(crush.getName());
+        jButton[x][y].setBackground(Color.pink);
     }
 
     public void refreshJframe() {
@@ -229,18 +267,18 @@ public class MatrixGUI extends JFrame {
         switch (position) {
             case 0:
                 tommy.setX(0);
-                tommy.setY(generaNumeroAleatorio(1, 18));
+                tommy.setY(generaNumeroAleatorio(1, jButton.length - 2));
                 break;
             case 1:
                 tommy.setX(jButton.length - 1);
-                tommy.setY(generaNumeroAleatorio(1, 18));
+                tommy.setY(generaNumeroAleatorio(1, jButton.length - 2));
                 break;
             case 2:
-                tommy.setX(generaNumeroAleatorio(1, 18));
+                tommy.setX(generaNumeroAleatorio(1, jButton.length - 2));
                 tommy.setY(jButton.length - 1);
                 break;
             case 3:
-                tommy.setX(generaNumeroAleatorio(1, 18));
+                tommy.setX(generaNumeroAleatorio(1, jButton.length - 2));
                 tommy.setY(0);
                 break;
 
@@ -248,6 +286,11 @@ public class MatrixGUI extends JFrame {
                 System.out.println("VALOR INVALIDO PARA INICIAR");
                 break;
         }
+    }
+
+    public void initCrush() {
+        crush.setX(generaNumeroAleatorio(2, jButton.length - 3));
+        crush.setY(generaNumeroAleatorio(2, jButton.length - 3));
     }
 
     /**
@@ -276,5 +319,14 @@ public class MatrixGUI extends JFrame {
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "opcion 3");
 
         return selection;
+    }
+
+    public void moveCrush() {
+        if (tommySteps % 3 == 0) {
+            cleanLastCrushPosition();
+            crush.setX(generaNumeroAleatorio(2, jButton.length - 3));
+            crush.setY(generaNumeroAleatorio(2, jButton.length - 3));
+            refreshCrushPosition();
+        }
     }
 }
