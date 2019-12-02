@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
@@ -30,6 +31,10 @@ public class MatrixGUI extends JFrame {
     private JButton downButton;
     private Tommy tommy;
     private LaCrush crush;
+    private Alien alien;
+    private Alien[] vAliens;
+    private Stone stone;
+    private Stone[] vStone;
     private int tommySteps;
 
     public MatrixGUI() {
@@ -39,14 +44,8 @@ public class MatrixGUI extends JFrame {
         setUpButton("U");
         setDownButton("D");
 
-        tommy = new Tommy();
-        crush = new LaCrush();
+        initGame();
 
-        int selection = positionSelector();
-        initTommy(selection);
-        initCrush();
-        refreshTommyPosition();
-        refreshCrushPosition();
         this.add(leftButton);
         this.add(rigthButton);
         this.add(upButton);
@@ -137,10 +136,14 @@ public class MatrixGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (tommy.getY() >= 1) {
-                    cleanLastTommyPosition();
-                    tommy.setY(tommy.getY() - 1);
-                    tommySteps++;
-                    moveCrush();
+                    if (!jButton[tommy.getX()][tommy.getY() - 1].getText().equals("S")) {
+                        cleanLastTommyPosition();
+                        tommy.setY(tommy.getY() - 1);
+                        tommySteps++;
+                        moveCrush();
+                        cleanLastAlienPosition(0);
+                        moveAliens(0);
+                    }
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -159,10 +162,14 @@ public class MatrixGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (tommy.getY() <= jButton.length - 2) {
-                    cleanLastTommyPosition();
-                    tommy.setY(tommy.getY() + 1);
-                    tommySteps++;
-                    moveCrush();
+                    if (!jButton[tommy.getX()][tommy.getY() + 1].getText().equals("S")) {
+                        cleanLastTommyPosition();
+                        tommy.setY(tommy.getY() + 1);
+                        tommySteps++;
+                        moveCrush();
+                        cleanLastAlienPosition(0);
+                        moveAliens(0);
+                    }
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -182,10 +189,14 @@ public class MatrixGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (tommy.getX() >= 1) {
-                    cleanLastTommyPosition();
-                    tommy.setX(tommy.getX() - 1);
-                    tommySteps++;
-                    moveCrush();
+                    if (!jButton[tommy.getX() - 1][tommy.getY()].getText().equals("S")) {
+                        cleanLastTommyPosition();
+                        tommy.setX(tommy.getX() - 1);
+                        tommySteps++;
+                        moveCrush();
+                        cleanLastAlienPosition(0);
+                        moveAliens(0);
+                    }
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -205,10 +216,14 @@ public class MatrixGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 if (tommy.getX() <= jButton.length - 2) {
-                    cleanLastTommyPosition();
-                    tommy.setX(tommy.getX() + 1);
-                    tommySteps++;
-                    moveCrush();
+                    if (!jButton[tommy.getX() + 1][tommy.getY()].getText().equals("S")) {
+                        cleanLastTommyPosition();
+                        tommy.setX(tommy.getX() + 1);
+                        tommySteps++;
+                        moveCrush();
+                        cleanLastAlienPosition(0);
+                        moveAliens(0);
+                    }
                 }
                 refreshTommyPosition();
                 refreshJframe();
@@ -255,6 +270,7 @@ public class MatrixGUI extends JFrame {
     public void refreshJframe() {
         jFrame.revalidate();
         jFrame.repaint();
+        jFrame.setVisible(true);
     }
 
     /**
@@ -322,11 +338,214 @@ public class MatrixGUI extends JFrame {
     }
 
     public void moveCrush() {
+        int position = 0;
+        int x = crush.getX();
+        int y = crush.getY();
+        boolean securePositionFlag = true;
         if (tommySteps % 3 == 0) {
+            //System.out.println("La Crush se mueve de posición " + x + "," + y);
             cleanLastCrushPosition();
-            crush.setX(generaNumeroAleatorio(2, jButton.length - 3));
-            crush.setY(generaNumeroAleatorio(2, jButton.length - 3));
-            refreshCrushPosition();
+            position = generaNumeroAleatorio(0, 3);
+            if (position == 0) {
+                if (y <= 2 || jButton[x][y - 1].getText().equals("S")) {
+                    securePositionFlag = false;
+                } else {
+                    y = y - 1;
+                }
+            } else if (position == 1) {
+                if (y >= (jButton.length - 3) || jButton[x][y + 1].getText().equals("S")) {
+                    securePositionFlag = false;
+                } else {
+                    y = y + 1;
+                }
+            } else if (position == 2) {
+                if (x <= 2 || jButton[x - 1][y].getText().equals("S")) {
+                    securePositionFlag = false;
+                } else {
+                    x = x - 1;
+                }
+            } else if (position == 3) {
+                if (x >= (jButton.length - 3) || jButton[x + 1][y].getText().equals("S")) {
+                    securePositionFlag = false;
+                } else {
+                    x = x + 1;
+                }
+            }
+            if (securePositionFlag) {
+
+                crush.setX(x);
+                crush.setY(y);
+                refreshCrushPosition();
+                //System.out.println("a posición: " + x + "," + y);
+            } else {
+                moveCrush();
+            }
         }
+    }
+
+    public void initGame() {
+        tommy = new Tommy();
+        crush = new LaCrush();
+        alien = new Alien();
+        stone = new Stone();
+        vAliens = new Alien[100];
+        vStone = new Stone[50];
+
+        int selection = positionSelector();
+        initTommy(selection);
+        initCrush();
+        initStones();
+        initAliens();
+
+        refreshTommyPosition();
+        refreshCrushPosition();
+    }
+
+    public void initAliens() {
+        setAliensInitPosition(0);
+    }
+
+    public void initStones() {
+        setStonesInitPosition(0);
+    }
+
+    public void setStonesInitPosition(int i) {
+        if (i <= vStone.length - 1) {
+            int x = (generaNumeroAleatorio(0, jButton.length - 1));
+            int y = (generaNumeroAleatorio(0, jButton.length - 1));
+            if (jButton[x][y].getText().equals("")) {
+                jButton[x][y].setText(stone.getName());
+                jButton[x][y].setBackground(Color.darkGray);
+                stone = new Stone();
+                stone.setX(x);
+                stone.setY(y);
+                vStone[i] = stone;
+                i++;
+
+            }
+            setStonesInitPosition(i);
+        }
+    }
+
+    public void cleanLastAlienPosition(int i) {
+        if (i <= vAliens.length - 1) {
+            //System.out.println("Limpiando posición: " + i);
+            int x = vAliens[i].getX();
+            int y = vAliens[i].getY();
+
+            if (jButton[x][y].getText().equals("C")) {
+                jButton[x][y].setText("C");
+                jButton[x][y].setBackground(Color.PINK);
+            } else {
+                jButton[x][y].setText("");
+                jButton[x][y].setBackground(Color.GRAY);
+            }
+            i++;
+            cleanLastAlienPosition(i);
+        }
+    }
+
+    public void setAliensInitPosition(int i) {
+        if (i <= vAliens.length - 1) {
+            int x = (generaNumeroAleatorio(0, jButton.length - 1));
+            int y = (generaNumeroAleatorio(0, jButton.length - 1));
+            if (jButton[x][y].getText().equals("")) {
+                jButton[x][y].setText(alien.getName());
+                jButton[x][y].setBackground(Color.GREEN);
+                alien = new Alien();
+                alien.setX(x);
+                alien.setY(y);
+                vAliens[i] = alien;
+                //System.out.println("Posición Inicial " + i + "     x: " + x + "   y: " + y);
+                i++;
+
+            }
+            setAliensInitPosition(i);
+        }
+    }
+
+    public void moveAliens(int i) {
+        alien = new Alien();
+        boolean flag = true;
+        if (i <= (vAliens.length - 1)) {
+            int x = vAliens[i].getX();
+            int y = vAliens[i].getY();
+            int position = generaNumeroAleatorio(0, 3);
+            if (position == 0) {
+                if (y <= 0) {
+                    flag = false;
+                } else {
+                    y = y - 1;
+                }
+            } else if (position == 1) {
+                if (y >= (jButton.length - 1)) {
+                    flag = false;
+                } else {
+                    y = y + 1;
+                }
+            } else if (position == 2) {
+                if (x <= 0) {
+                    flag = false;
+                } else {
+                    x = x - 1;
+                }
+            } else if (position == 3) {
+                if (x >= (jButton.length - 1)) {
+                    flag = false;
+                } else {
+                    x = x + 1;
+                }
+            } else {
+                flag = false;
+            }
+            String jButtonText = jButton[x][y].getText();
+            if (!jButtonText.equals("S") && flag) {
+                if (jButtonText.equals("A") || jButtonText.equals("AA")) {
+                    jButton[x][y].setText(jButtonText + "A");
+                } else {
+                    jButton[x][y].setText(alien.getName());
+                }
+                if (jButtonText.equals("C")) {
+                    if (crush.getInvicibility() >= 1) {
+                        jButton[x][y].setText(crush.getName());
+                        jButton[x][y].setBackground(Color.WHITE);
+                        crush.setInvicibility(crush.getInvicibility() - 1);
+                        System.out.println("Invicibilidad = " + crush.getInvicibility());
+                    } else {
+                        crush.setCondition(false);
+                        gameOver("Tu Crush ha sido eliminada");
+                    }
+                } else {
+                    jButton[x][y].setBackground(Color.GREEN);
+                }
+
+                alien.setX(x);
+                alien.setY(y);
+                vAliens[i] = alien;
+                //System.out.println("Posición " + i + "     x: " + x + "   y: " + y);
+                i++;
+            }
+            moveAliens(i);
+        }
+    }
+
+    public void gameOver(String lostCause) {
+        jFrame.setVisible(false);
+
+        Object options[] = {"Again", "Close"};
+        //Opciones 0, 1
+        int selection = JOptionPane.showOptionDialog(null, lostCause, "Game Over",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "opcion 3");
+
+        if (selection == 0) {
+            cleanLastTommyPosition();
+            cleanLastCrushPosition();
+            cleanLastAlienPosition(0);
+            initGame();
+            refreshJframe();
+        } else {
+            jFrame.dispatchEvent(new WindowEvent(jFrame, WindowEvent.WINDOW_CLOSING));
+        }
+
     }
 }

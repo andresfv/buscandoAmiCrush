@@ -9,15 +9,14 @@ package main;
  *
  * @author Luis Andrés Fallas Valenciano
  */
-public class LaCrush {
+public class Alien {
 
-    private String name = "C";
+    private String name = "A";
     private int x = 0;
     private int y = 0;
-    private int invicibility = 20;
     boolean condition = true;
 
-    public LaCrush() {
+    public Alien() {
 
     }
 
@@ -43,14 +42,6 @@ public class LaCrush {
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public int getInvicibility() {
-        return invicibility;
-    }
-
-    public void setInvicibility(int invicibility) {
-        this.invicibility = invicibility;
     }
 
     public boolean isCondition() {
