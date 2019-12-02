@@ -30,7 +30,7 @@ public class MatrixGUI extends JFrame {
     private JButton upButton;
     private JButton downButton;
     private Tommy tommy;
-    private LaCrush crush;
+    private TheCrush theCrush;
     private Alien alien;
     private Alien[] vAliens;
     private Stone stone;
@@ -145,8 +145,26 @@ public class MatrixGUI extends JFrame {
                         moveAliens(0);
                     }
                 }
+//                    else if (tommy.getTeleport() >= 1
+//                        && !jButton[tommy.getX()][jButton.length - 1].getText().equals("S")) {
+//                    cleanLastTommyPosition();
+//                    tommy.setY(jButton.length - 1);
+//                    tommy.setTeleport(tommy.getTeleport() - 1);
+//                    tommySteps++;
+//                    moveCrush();
+//                    cleanLastAlienPosition(0);
+//                    moveAliens(0);
+//                }
                 refreshTommyPosition();
                 refreshJframe();
+                if (theCrush.condition == false) {
+                    gameOver("Tu Crush ha sido abducida");
+                    return;
+                }
+                if (tommy.getCondition() == false) {
+                    gameOver("Tommy ha sido abducido");
+                    return;
+                }
             }
         });
     }
@@ -171,8 +189,26 @@ public class MatrixGUI extends JFrame {
                         moveAliens(0);
                     }
                 }
+//                else if (tommy.getTeleport() >= 1
+//                        && !jButton[tommy.getX()][0].getText().equals("S")) {
+//                    cleanLastTommyPosition();
+//                    tommy.setY(0);
+//                    tommy.setTeleport(tommy.getTeleport() - 1);
+//                    tommySteps++;
+//                    moveCrush();
+//                    cleanLastAlienPosition(0);
+//                    moveAliens(0);
+//                }
                 refreshTommyPosition();
                 refreshJframe();
+                if (theCrush.condition == false) {
+                    gameOver("Tu Crush ha sido abducida");
+                    return;
+                }
+                if (tommy.getCondition() == false) {
+                    gameOver("Tommy ha sido abducido");
+                    return;
+                }
             }
         });
 
@@ -198,8 +234,26 @@ public class MatrixGUI extends JFrame {
                         moveAliens(0);
                     }
                 }
+//                else if (tommy.getTeleport() >= 1
+//                        && !jButton[jButton.length - 1][tommy.getY()].getText().equals("S")) {
+//                    cleanLastTommyPosition();
+//                    tommy.setX(jButton.length - 1);
+//                    tommy.setTeleport(tommy.getTeleport() - 1);
+//                    tommySteps++;
+//                    moveCrush();
+//                    cleanLastAlienPosition(0);
+//                    moveAliens(0);
+//                }
                 refreshTommyPosition();
                 refreshJframe();
+                if (theCrush.condition == false) {
+                    gameOver("Tu Crush ha sido abducida");
+                    return;
+                }
+                if (tommy.getCondition() == false) {
+                    gameOver("Tommy ha sido abducido");
+                    return;
+                }
             }
         });
     }
@@ -225,8 +279,26 @@ public class MatrixGUI extends JFrame {
                         moveAliens(0);
                     }
                 }
+//                else if (tommy.getTeleport() >= 1
+//                        && !jButton[0][tommy.getY()].getText().equals("S")) {
+//                    cleanLastTommyPosition();
+//                    tommy.setX(0);
+//                    tommy.setTeleport(tommy.getTeleport() - 1);
+//                    tommySteps++;
+//                    moveCrush();
+//                    cleanLastAlienPosition(0);
+//                    moveAliens(0);
+//                }
                 refreshTommyPosition();
                 refreshJframe();
+                if (theCrush.condition == false) {
+                    gameOver("Tu Crush ha sido abducida");
+                    return;
+                }
+                if (tommy.getCondition() == false) {
+                    gameOver("Tommy ha sido abducido");
+                    return;
+                }
             }
         });
     }
@@ -244,8 +316,8 @@ public class MatrixGUI extends JFrame {
     }
 
     public void cleanLastCrushPosition() {
-        int x = crush.getX();
-        int y = crush.getY();
+        int x = theCrush.getX();
+        int y = theCrush.getY();
 
         jButton[x][y].setText("");
         jButton[x][y].setBackground(Color.GRAY);
@@ -255,15 +327,24 @@ public class MatrixGUI extends JFrame {
         int x = tommy.getX();
         int y = tommy.getY();
 
+        String jButtonText = jButton[x][y].getText();
+        if (jButtonText.contains("A") && tommy.getBullets() >= 1) {
+            if (jButtonText.length() <= tommy.getBullets()) {
+                powerGunAction(x, y);
+            } else {
+                tommy.setCondition(false);
+            }
+        }
+
         jButton[x][y].setText(tommy.getName());
         jButton[x][y].setBackground(Color.blue);
     }
 
     public void refreshCrushPosition() {
-        int x = crush.getX();
-        int y = crush.getY();
+        int x = theCrush.getX();
+        int y = theCrush.getY();
 
-        jButton[x][y].setText(crush.getName());
+        jButton[x][y].setText(theCrush.getName());
         jButton[x][y].setBackground(Color.pink);
     }
 
@@ -305,8 +386,8 @@ public class MatrixGUI extends JFrame {
     }
 
     public void initCrush() {
-        crush.setX(generaNumeroAleatorio(2, jButton.length - 3));
-        crush.setY(generaNumeroAleatorio(2, jButton.length - 3));
+        theCrush.setX(generaNumeroAleatorio(2, jButton.length - 3));
+        theCrush.setY(generaNumeroAleatorio(2, jButton.length - 3));
     }
 
     /**
@@ -337,10 +418,14 @@ public class MatrixGUI extends JFrame {
         return selection;
     }
 
+    public void moveTommy() {
+
+    }
+
     public void moveCrush() {
         int position = 0;
-        int x = crush.getX();
-        int y = crush.getY();
+        int x = theCrush.getX();
+        int y = theCrush.getY();
         boolean securePositionFlag = true;
         if (tommySteps % 3 == 0) {
             //System.out.println("La Crush se mueve de posición " + x + "," + y);
@@ -373,8 +458,8 @@ public class MatrixGUI extends JFrame {
             }
             if (securePositionFlag) {
 
-                crush.setX(x);
-                crush.setY(y);
+                theCrush.setX(x);
+                theCrush.setY(y);
                 refreshCrushPosition();
                 //System.out.println("a posición: " + x + "," + y);
             } else {
@@ -385,11 +470,12 @@ public class MatrixGUI extends JFrame {
 
     public void initGame() {
         tommy = new Tommy();
-        crush = new LaCrush();
+        theCrush = new TheCrush();
         alien = new Alien();
         stone = new Stone();
         vAliens = new Alien[100];
         vStone = new Stone[50];
+        tommySteps = 0;
 
         int selection = positionSelector();
         initTommy(selection);
@@ -429,7 +515,7 @@ public class MatrixGUI extends JFrame {
 
     public void cleanLastAlienPosition(int i) {
         if (i <= vAliens.length - 1) {
-            //System.out.println("Limpiando posición: " + i);
+//            System.out.println("Limpiando posición: " + i);
             int x = vAliens[i].getX();
             int y = vAliens[i].getY();
 
@@ -499,21 +585,20 @@ public class MatrixGUI extends JFrame {
                 flag = false;
             }
             String jButtonText = jButton[x][y].getText();
-            if (!jButtonText.equals("S") && flag) {
+            if (!jButtonText.equals("S") && flag && vAliens[i].isCondition()) {
                 if (jButtonText.equals("A") || jButtonText.equals("AA")) {
                     jButton[x][y].setText(jButtonText + "A");
                 } else {
                     jButton[x][y].setText(alien.getName());
                 }
                 if (jButtonText.equals("C")) {
-                    if (crush.getInvicibility() >= 1) {
-                        jButton[x][y].setText(crush.getName());
+                    if (theCrush.getInvicibility() >= 1) {
+                        jButton[x][y].setText(theCrush.getName());
                         jButton[x][y].setBackground(Color.WHITE);
-                        crush.setInvicibility(crush.getInvicibility() - 1);
-                        System.out.println("Invicibilidad = " + crush.getInvicibility());
+                        theCrush.setInvicibility(theCrush.getInvicibility() - 1);
+                        System.out.println("Invicibilidad = " + theCrush.getInvicibility());
                     } else {
-                        crush.setCondition(false);
-                        gameOver("Tu Crush ha sido eliminada");
+                        theCrush.setCondition(false);
                     }
                 } else {
                     jButton[x][y].setBackground(Color.GREEN);
@@ -522,17 +607,18 @@ public class MatrixGUI extends JFrame {
                 alien.setX(x);
                 alien.setY(y);
                 vAliens[i] = alien;
-                //System.out.println("Posición " + i + "     x: " + x + "   y: " + y);
+                System.out.println("Posición " + i + "     x: " + x + "   y: " + y);
                 i++;
             }
             moveAliens(i);
         }
+
     }
 
     public void gameOver(String lostCause) {
         jFrame.setVisible(false);
 
-        Object options[] = {"Again", "Close"};
+        Object options[] = {"Reiniciar", "Cerrar"};
         //Opciones 0, 1
         int selection = JOptionPane.showOptionDialog(null, lostCause, "Game Over",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "opcion 3");
@@ -545,6 +631,28 @@ public class MatrixGUI extends JFrame {
             refreshJframe();
         } else {
             jFrame.dispatchEvent(new WindowEvent(jFrame, WindowEvent.WINDOW_CLOSING));
+        }
+
+    }
+
+    public void powerGunAction(int x, int y) {
+
+        Object options[] = {"Usar Pistola", "Morir"};
+        //Opciones 0, 1
+        int selection = JOptionPane.showOptionDialog(null, "Se encontró un Alien, ¿Desea utilizar la pistola?", "Game Over",
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, "opcion 3");
+
+        if (selection == 0) {
+            String jButtonText = jButton[x][y].getText();
+            if (jButtonText.contains("A")) {
+                for (int i = 0; i < vAliens.length - 1; i++) {
+                    if (vAliens[i].getX() == x && vAliens[i].getY() == y) {
+                        vAliens[i].setCondition(false);
+                    }
+                }
+            }
+        } else {
+            tommy.setCondition(false);
         }
 
     }

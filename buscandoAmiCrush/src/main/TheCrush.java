@@ -9,7 +9,7 @@ package main;
  *
  * @author Luis Andrés Fallas Valenciano
  */
-public class LaCrush {
+public class TheCrush {
 
     private String name = "C";
     private int x = 0;
@@ -17,7 +17,7 @@ public class LaCrush {
     private int invicibility = 20;
     boolean condition = true;
 
-    public LaCrush() {
+    public TheCrush() {
 
     }
 
