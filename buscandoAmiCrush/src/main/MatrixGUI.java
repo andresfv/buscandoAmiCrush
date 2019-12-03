@@ -328,8 +328,8 @@ public class MatrixGUI extends JFrame {
         int y = tommy.getY();
 
         String jButtonText = jButton[x][y].getText();
-        if (jButtonText.contains("A") && tommy.getBullets() >= 1) {
-            if (jButtonText.length() <= tommy.getBullets()) {
+        if (jButtonText.contains("A")) {
+            if (tommy.getBullets() >= 1 && jButtonText.length() <= tommy.getBullets()) {
                 powerGunAction(x, y);
             } else {
                 tommy.setCondition(false);
@@ -364,18 +364,18 @@ public class MatrixGUI extends JFrame {
         switch (position) {
             case 0:
                 tommy.setX(0);
-                tommy.setY(generaNumeroAleatorio(1, jButton.length - 2));
+                tommy.setY(generateRandomNumber(1, jButton.length - 2));
                 break;
             case 1:
                 tommy.setX(jButton.length - 1);
-                tommy.setY(generaNumeroAleatorio(1, jButton.length - 2));
+                tommy.setY(generateRandomNumber(1, jButton.length - 2));
                 break;
             case 2:
-                tommy.setX(generaNumeroAleatorio(1, jButton.length - 2));
+                tommy.setX(generateRandomNumber(1, jButton.length - 2));
                 tommy.setY(jButton.length - 1);
                 break;
             case 3:
-                tommy.setX(generaNumeroAleatorio(1, jButton.length - 2));
+                tommy.setX(generateRandomNumber(1, jButton.length - 2));
                 tommy.setY(0);
                 break;
 
@@ -386,8 +386,8 @@ public class MatrixGUI extends JFrame {
     }
 
     public void initCrush() {
-        theCrush.setX(generaNumeroAleatorio(2, jButton.length - 3));
-        theCrush.setY(generaNumeroAleatorio(2, jButton.length - 3));
+        theCrush.setX(generateRandomNumber(2, jButton.length - 3));
+        theCrush.setY(generateRandomNumber(2, jButton.length - 3));
     }
 
     /**
@@ -397,7 +397,11 @@ public class MatrixGUI extends JFrame {
      * @param maximo
      * @return numeroAleatorio
      */
-    public int generaNumeroAleatorio(int minimo, int maximo) {
+    public int generateRandomNumber(int minimo, int maximo) {
+        if (minimo >= maximo) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+
         int numeroAleatorio = 0;
         numeroAleatorio = (int) Math.floor(Math.random() * (minimo - (maximo + 1)) + (maximo + 1));
         return numeroAleatorio;
@@ -430,7 +434,7 @@ public class MatrixGUI extends JFrame {
         if (tommySteps % 3 == 0) {
             //System.out.println("La Crush se mueve de posición " + x + "," + y);
             cleanLastCrushPosition();
-            position = generaNumeroAleatorio(0, 3);
+            position = generateRandomNumber(0, 3);
             if (position == 0) {
                 if (y <= 2 || jButton[x][y - 1].getText().equals("S")) {
                     securePositionFlag = false;
@@ -497,8 +501,8 @@ public class MatrixGUI extends JFrame {
 
     public void setStonesInitPosition(int i) {
         if (i <= vStone.length - 1) {
-            int x = (generaNumeroAleatorio(0, jButton.length - 1));
-            int y = (generaNumeroAleatorio(0, jButton.length - 1));
+            int x = (generateRandomNumber(0, jButton.length - 1));
+            int y = (generateRandomNumber(0, jButton.length - 1));
             if (jButton[x][y].getText().equals("")) {
                 jButton[x][y].setText(stone.getName());
                 jButton[x][y].setBackground(Color.darkGray);
@@ -533,8 +537,8 @@ public class MatrixGUI extends JFrame {
 
     public void setAliensInitPosition(int i) {
         if (i <= vAliens.length - 1) {
-            int x = (generaNumeroAleatorio(0, jButton.length - 1));
-            int y = (generaNumeroAleatorio(0, jButton.length - 1));
+            int x = (generateRandomNumber(0, jButton.length - 1));
+            int y = (generateRandomNumber(0, jButton.length - 1));
             if (jButton[x][y].getText().equals("")) {
                 jButton[x][y].setText(alien.getName());
                 jButton[x][y].setBackground(Color.GREEN);
@@ -556,7 +560,7 @@ public class MatrixGUI extends JFrame {
         if (i <= (vAliens.length - 1)) {
             int x = vAliens[i].getX();
             int y = vAliens[i].getY();
-            int position = generaNumeroAleatorio(0, 3);
+            int position = generateRandomNumber(0, 3);
             if (position == 0) {
                 if (y <= 0) {
                     flag = false;
@@ -585,7 +589,7 @@ public class MatrixGUI extends JFrame {
                 flag = false;
             }
             String jButtonText = jButton[x][y].getText();
-            if (!jButtonText.equals("S") && flag && vAliens[i].isCondition()) {
+            if (!jButtonText.equals("S") && flag) {
                 if (jButtonText.equals("A") || jButtonText.equals("AA")) {
                     jButton[x][y].setText(jButtonText + "A");
                 } else {
@@ -608,6 +612,8 @@ public class MatrixGUI extends JFrame {
                 alien.setY(y);
                 vAliens[i] = alien;
                 System.out.println("Posición " + i + "     x: " + x + "   y: " + y);
+                i++;
+            } else if (!vAliens[i].isCondition()) {
                 i++;
             }
             moveAliens(i);
